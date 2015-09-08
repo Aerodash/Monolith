@@ -68,15 +68,16 @@ public abstract class Building extends GameObject {
 				}
 				
 				if (nextToCorridor){
-					setSelected(false);// put building in position
-					built = true;
-					Play.switchToNextShape = true;
 					//reduce the res by the cost of the building
 					try {
 						Play.resRemaining.minus(cost);
-					} catch (CostException e) {
-						
+					} catch (CostException e) {//if cost can't be diminished
+						Play.expLabel.warn(e.getMessage(), 5);
+						return;
 					}
+					setSelected(false);// put building in position
+					built = true;
+					Play.switchToNextShape = true;
 				}
 				// only one building can be  selected at a time
 				//if it is built it cannot be moved again

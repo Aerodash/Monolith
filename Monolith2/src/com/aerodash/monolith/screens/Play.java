@@ -15,6 +15,7 @@ import com.aerodash.monolith.entities.buildings.Stock;
 import com.aerodash.monolith.entities.buildings.Weapons;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.ui.BuildingLabel;
+import com.aerodash.monolith.ui.ExpandingLabel;
 import com.aerodash.monolith.ui.LabelListener;
 import com.aerodash.monolith.ui.NextShapePanel;
 import com.aerodash.monolith.utils.Assets;
@@ -48,6 +49,7 @@ public class Play extends ScreenAdapter{
 	private Stage hudStage;
 	
 	public static NextShapePanel panel;
+	public static ExpandingLabel expLabel;
 	public static boolean switchToNextShape = false;
 	
 	public Play(){
@@ -210,13 +212,17 @@ public class Play extends ScreenAdapter{
 		});
 		hudStage.addActor(quarters);
 		
-		BuildingLabel resLabel = new BuildingLabel(0, Monolith.height - 27, "", Color.WHITE, resRemaining);
-		resLabel.setHeight(27);
+		BuildingLabel resLabel = new BuildingLabel(0, Monolith.height - 28, "", Color.WHITE, resRemaining);
+		resLabel.setHeight(28);
 		resLabel.setWidth(Monolith.width / 8 + 15);
 		hudStage.addActor(resLabel);
 		
 		panel = new NextShapePanel(quarters.getX() + quarters.getWidth(), 0);
 		hudStage.addActor(panel);
+		
+		expLabel = new ExpandingLabel(resLabel.getX() + resLabel.getWidth(), resLabel.getY() + resLabel.getHeight() / 2 - 22 / 2);
+		hudStage.addActor(expLabel);
+		
 	}
 	
 }
