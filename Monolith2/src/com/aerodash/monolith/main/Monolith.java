@@ -2,7 +2,6 @@ package com.aerodash.monolith.main;
 
 import com.aerodash.monolith.screens.Play;
 import com.aerodash.monolith.utils.Debug;
-import com.aerodash.monolith.utils.MyInputProcessor;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;

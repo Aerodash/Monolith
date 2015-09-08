@@ -21,6 +21,7 @@ public class Test {
 		
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ArrayList removeDuplicates(ArrayList input){
 		ArrayList<Object> res = new ArrayList<Object>();
 		

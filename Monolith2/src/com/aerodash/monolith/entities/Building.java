@@ -72,7 +72,7 @@ public abstract class Building extends GameObject {
 					try {
 						Play.resRemaining.minus(cost);
 					} catch (CostException e) {//if cost can't be diminished
-						Play.expLabel.warn(e.getMessage(), 5);
+						Play.warn(e.getMessage(), 5);
 						return;
 					}
 					setSelected(false);// put building in position
@@ -184,6 +184,7 @@ public abstract class Building extends GameObject {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public ArrayList<Vector2> getSurroundingTiles() {
 		ArrayList<Vector2> res = new ArrayList<Vector2>();
 		

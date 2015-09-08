@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Utils {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ArrayList removeDuplicates(ArrayList input){
 		ArrayList<Object> res = new ArrayList<Object>();
 		

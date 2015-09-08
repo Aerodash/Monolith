@@ -50,7 +50,6 @@ public class NextShapePanel extends Actor {
 				nextShape = new SShape(getX() + getWidth() / 2 - TetrisShape.getShapeWidthForUI(TetrisShape.Type.L) / 2 + Monolith.tileSize * scale, getY() + getHeight() / 2 - TetrisShape.getShapeHeightForUI(type) / 2, shapeColor, Monolith.tileSize * scale, InitialState.TWO);
 			}
 		}else if (nextShape.getClass().equals(TShape.class)){
-			TShape l = (TShape) nextShape;
 			nextShape = new TShape(getX() + getWidth() / 2 - TetrisShape.getShapeWidthForUI(TetrisShape.Type.L) / 2, getY() + getHeight() / 2 - TetrisShape.getShapeHeightForUI(type) / 2 + Monolith.tileSize * scale, shapeColor, Monolith.tileSize * scale);
 		}
 		

@@ -1,7 +1,6 @@
 package com.aerodash.monolith.entities.buildings;
 
 import com.aerodash.monolith.core.Cost;
-import com.aerodash.monolith.core.shapes.TetrisShape;
 import com.aerodash.monolith.core.shapes.TetrisShape.InitialState;
 import com.aerodash.monolith.core.shapes.TetrisShape.Type;
 import com.aerodash.monolith.core.shapes.TetrisShape.TypeState;

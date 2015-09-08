@@ -46,7 +46,7 @@ public class Play extends ScreenAdapter{
 	private Viewport viewport;
 	private static Vector3 mouse;
 	private static Vector3 unprojectedMouse;
-	private Stage hudStage;
+	private static Stage hudStage;
 	
 	public static NextShapePanel panel;
 	public static ExpandingLabel expLabel;
@@ -105,6 +105,7 @@ public class Play extends ScreenAdapter{
 		Assets.smallFont.setColor(new Color(0.91f, 0.21f, 0.21f, 1f));
 		Assets.smallFont.draw(sb, "Time to next wave (2 enemies) :", 5, 75);
 		sb.end();
+		
 	}
 	Corridor c; 
 	Stock stock, stock2, stock3;
@@ -223,6 +224,33 @@ public class Play extends ScreenAdapter{
 		expLabel = new ExpandingLabel(resLabel.getX() + resLabel.getWidth(), resLabel.getY() + resLabel.getHeight() / 2 - 22 / 2);
 		hudStage.addActor(expLabel);
 		
+	}
+	
+	public static void show(String text, float duration){
+		float x = expLabel.getX();
+		float y = expLabel.getY();
+		expLabel.remove();
+		expLabel = new ExpandingLabel(x, y);
+		hudStage.addActor(expLabel);
+		expLabel.show(text, duration);
+	}
+	
+	public static void warn(String text, float duration){
+		float x = expLabel.getX();
+		float y = expLabel.getY();
+		expLabel.remove();
+		expLabel = new ExpandingLabel(x, y);
+		hudStage.addActor(expLabel);
+		expLabel.warn(text, duration);
+	}
+	
+	public static void info(String text, float duration){
+		float x = expLabel.getX();
+		float y = expLabel.getY();
+		expLabel.remove();
+		expLabel = new ExpandingLabel(x, y);
+		hudStage.addActor(expLabel);
+		expLabel.info(text, duration);
 	}
 	
 }

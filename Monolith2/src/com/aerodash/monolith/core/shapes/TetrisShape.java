@@ -1,7 +1,6 @@
 package com.aerodash.monolith.core.shapes;
 
 import com.aerodash.monolith.core.GameObject;
-import com.aerodash.monolith.core.GameObjects;
 import com.aerodash.monolith.core.Tile;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.main.Monolith;
@@ -19,7 +18,7 @@ public abstract class TetrisShape extends GameObject {
 	public boolean collided = false;
 	Vector2 oldPos, offset;
 	private Building building;
-	private boolean outlined = false;
+	@SuppressWarnings("unused") private boolean outlined = false;
 	public TypeState typeState;
 
 	public static class TypeState{
@@ -137,6 +136,8 @@ public abstract class TetrisShape extends GameObject {
 		case T:
 			res = new TShape(x, y, color, tileSize);
 			break;
+		default:
+			break;
 		}
 		
 		return res;
@@ -209,6 +210,8 @@ public abstract class TetrisShape extends GameObject {
 			return Monolith.tileSize * 2 * NextShapePanel.scale;
 		case T:
 			return Monolith.tileSize * 2 * NextShapePanel.scale;
+		default:
+			break;
 		}
 		return -1;
 	}
@@ -225,6 +228,8 @@ public abstract class TetrisShape extends GameObject {
 			return Monolith.tileSize * 3 * NextShapePanel.scale;
 		case T:
 			return Monolith.tileSize * 3 * NextShapePanel.scale;
+		default:
+			break;
 		}
 		return -1;
 	}

@@ -37,8 +37,6 @@ public class ExpandingLabel extends Actor{
 	
 	@Override
 	public void act(float delta) {
-//		if (getWidth() < maxWidth)
-//		System.out.println(getWidth());
 		if (visible){
 			manager.update(delta);
 			
@@ -66,7 +64,6 @@ public class ExpandingLabel extends Actor{
 			}
 		}
 		
-		System.out.println(textColor.a);
 	}
 	
 	@Override
@@ -87,7 +84,7 @@ public class ExpandingLabel extends Actor{
 	
 	private void show(String text, Color color, float duration){
 		if (!visible){
-			visible = true;
+			setVisible(true);
 			this.text = text;
 			textColor = color;
 			textColor.a = 0;
@@ -96,7 +93,7 @@ public class ExpandingLabel extends Actor{
 	}
 	
 	public void hide(){
-		visible = false;
+		setVisible(false);
 	}
 	
 	private void setupTween() {
@@ -133,11 +130,15 @@ public class ExpandingLabel extends Actor{
 		backCb = new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				visible = false;
+				setVisible(false);
 				showText = false;
 			}
 		};
 		
+	}
+	
+	public void setVisible(boolean b){
+		visible = b;
 	}
 	
 }

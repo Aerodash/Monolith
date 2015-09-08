@@ -3,7 +3,6 @@ package com.aerodash.monolith.ui;
 import com.aerodash.monolith.core.Cost;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.main.Monolith;
-import com.aerodash.monolith.screens.Play;
 import com.aerodash.monolith.utils.Assets;
 import com.aerodash.monolith.utils.Colors;
 import com.badlogic.gdx.Gdx;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class BuildingLabel extends Actor{
@@ -25,7 +23,6 @@ public class BuildingLabel extends Actor{
 	private Color color;
 	private Cost cost;
 	private LabelListener listener;
-	private Building building;
 	
 	private int updatesRemaining = 5;
 	

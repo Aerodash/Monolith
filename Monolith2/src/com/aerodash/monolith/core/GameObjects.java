@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 
 import com.aerodash.monolith.entities.Building;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 
 public class GameObjects {
 	
@@ -70,6 +69,7 @@ public class GameObjects {
 		return null;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static boolean isObjectOfType(float gridX, float gridY, Class clazz){
 		Class c = getObjectTypeAt(gridX, gridY);
 		if (c == null || !clazz.equals(c)) return false;
@@ -140,7 +140,6 @@ public class GameObjects {
 	public static boolean collides(GameObject obj){
 		if (obj.getClass().getSuperclass().equals(Building.class)){//if its a building check collision of all its tiles
 			Building b = (Building) obj;
-			Array<Tile> btiles = b.getShape().tiles;
 			for (GameObject o : objects.values()){
 				if (o.getClass().getSuperclass().equals(Building.class)){
 					Building b1 = (Building) o;

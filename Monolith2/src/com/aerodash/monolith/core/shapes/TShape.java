@@ -1,9 +1,6 @@
 package com.aerodash.monolith.core.shapes;
 
 import com.aerodash.monolith.core.Tile;
-import com.aerodash.monolith.core.shapes.TetrisShape.Type;
-import com.aerodash.monolith.core.shapes.TetrisShape.TypeState;
-import com.aerodash.monolith.main.Monolith;
 import com.badlogic.gdx.graphics.Color;
 
 public class TShape extends TetrisShape{

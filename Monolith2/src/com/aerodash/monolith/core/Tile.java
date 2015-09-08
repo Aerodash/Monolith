@@ -3,12 +3,9 @@ package com.aerodash.monolith.core;
 import com.aerodash.monolith.core.shapes.TetrisShape;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.utils.Assets;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
