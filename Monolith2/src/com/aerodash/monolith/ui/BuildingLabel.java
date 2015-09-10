@@ -47,7 +47,7 @@ public class BuildingLabel extends Actor{
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		
-		if (isClicked()){
+		if (isClicked() && listener != null){
 			updatesRemaining = 5;
 			batch.setColor(1, 1, 1, 0.1f);
 		}else{

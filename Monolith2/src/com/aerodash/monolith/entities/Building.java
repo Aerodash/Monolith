@@ -120,10 +120,15 @@ public abstract class Building extends GameObject {
 		
 	}
 	
-	private void dispose() {
+	public void dispose() {
 		GameObjects.removeObject(id);
-		selectedBuilding = null;
-		selected = false;
+		if (selected){
+			selectedBuilding = null;
+			selected = false;
+		}else{
+			selectedAfterBuiltBuilding = null;
+			selectedAfterBuilt =false;
+		}
 	}
 
 	@Override
@@ -251,5 +256,9 @@ public abstract class Building extends GameObject {
 		this.doUpdate = doUpdate;
 		this.doRender = doRender;
 		return this;
+	}
+	
+	public Cost getCost(){
+		return cost;
 	}
 }

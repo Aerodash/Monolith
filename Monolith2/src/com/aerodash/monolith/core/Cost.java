@@ -31,6 +31,12 @@ public class Cost {
 		food = 0;
 	}
 	
+	private Cost(Cost cost){
+		particles = cost.particles;
+		energy = cost.energy;
+		food = cost.food;
+	}
+	
 	public void plus(int particles, int energy, int food){
 		this.particles += particles;
 		this.energy += energy;
@@ -50,6 +56,19 @@ public class Cost {
 	
 	public void minus(Cost cost) throws CostException{
 		minus(cost.particles, cost.energy, cost.food);
+	}
+	
+	public Cost reduceTo75percent(){
+		Cost cost = new Cost(this);
+		cost.energy = (int) (this.energy * .75f);
+		cost.particles = (int) (this.particles * .75f);
+		cost.food = (int) (this.food * .75f);
+		return cost;
+	}
+	
+	@Override
+	public String toString() {
+		return "[energy:" + energy + ", particles:" + particles + ", food:" + food + "]";
 	}
 	
 }

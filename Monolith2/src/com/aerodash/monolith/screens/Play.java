@@ -5,6 +5,7 @@ import com.aerodash.monolith.core.GameObjects;
 import com.aerodash.monolith.core.shapes.TetrisShape;
 import com.aerodash.monolith.core.shapes.TetrisShape.InitialState;
 import com.aerodash.monolith.core.shapes.TetrisShape.TypeState;
+import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.entities.buildings.Extractor;
 import com.aerodash.monolith.entities.buildings.Gardens;
@@ -16,6 +17,7 @@ import com.aerodash.monolith.entities.buildings.Weapons;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.ui.BuildingLabel;
 import com.aerodash.monolith.ui.ExpandingLabel;
+import com.aerodash.monolith.ui.IconLabel;
 import com.aerodash.monolith.ui.LabelListener;
 import com.aerodash.monolith.ui.NextShapePanel;
 import com.aerodash.monolith.utils.Assets;
@@ -223,6 +225,20 @@ public class Play extends ScreenAdapter{
 		
 		expLabel = new ExpandingLabel(resLabel.getX() + resLabel.getWidth(), resLabel.getY() + resLabel.getHeight() / 2 - 22 / 2);
 		hudStage.addActor(expLabel);
+		
+		IconLabel refund = new IconLabel(320, 75, "Refund (75% of the price)", Assets.x, Colors.waveBarColor);
+		refund.setListener(new LabelListener(){
+
+			@Override
+			public void onClick() {
+				//refund 75% of cost
+				Cost reducedCost = Building.selectedAfterBuiltBuilding.getCost().reduceTo75percent();
+				resRemaining.plus(reducedCost);
+				Building.selectedAfterBuiltBuilding.dispose();
+			}
+			
+		});
+		hudStage.addActor(refund);
 		
 	}
 	
