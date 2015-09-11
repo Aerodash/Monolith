@@ -1,24 +1,18 @@
 package com.aerodash.monolith.test;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
 public class Test {
 
 	public static void main(String[] args) {
 		
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
-		map.put(1, "One");
-		map.put(2, "Two");
+		Integer[] t = new Integer[]{
+				null, null, null
+		};
 		
-		Iterator<String> it = map.values().iterator();
-		while(it.hasNext()){
-			if (it.next().equals("Two")){
-				it.remove();
-			}
-		}
-		
+		System.out.println(allItemsSame(t));
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -34,6 +28,29 @@ public class Test {
 		}
 		
 		return res;
+	}
+	
+	public static void arrayPush(Object[] obj, Object toPush){
+		
+		for (int i = 0; i < obj.length - 1; i++){
+			obj[i] = obj[i + 1];
+		}
+		obj[obj.length - 1] = toPush;
+	}
+	
+	public static boolean allItemsSame(Object[] objs){
+		
+		if (objs[0] == null) return false;
+		for (int i = 0; i < objs.length - 1; i++){
+			if (objs[i] != objs[i + 1]) return false;
+		}
+		return true;
+	}
+	
+	public static void clearArray(Object[] objs){
+		for (Object o : objs){
+			o = null;
+		}
 	}
 
 }

@@ -16,6 +16,7 @@ public class Assets {
 	public static final TextureRegion triangle = new TextureRegion(new Texture(Gdx.files.internal("res/img/triangle.png")));
 	public static final TextureRegion headlessTriangle = new TextureRegion(new Texture(Gdx.files.internal("res/img/headlessTriangle.png")));
 	public static final TextureRegion x = new TextureRegion(new Texture(Gdx.files.internal("res/img/X.png")));
+	public static final TextureRegion minion = new TextureRegion(new Texture(Gdx.files.internal("res/img/minion.png")));
 	
 	public static final GlyphLayout layout = new GlyphLayout();
 	public static BitmapFont font;

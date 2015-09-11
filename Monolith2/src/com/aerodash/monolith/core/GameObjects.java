@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import com.aerodash.monolith.entities.Building;
+import com.aerodash.monolith.entities.Minion;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameObjects {
@@ -87,13 +88,19 @@ public class GameObjects {
 			//the selected building must be rendered last so it always overlaps all the buildings
 			//the selected building after built must be rendered last so it always overlaps all the buildings
 			//and is able to be rendered
-			if (!o.getClass().equals(Tile.class) && !o.toBeRemoved && !o.equals(Building.selectedBuilding) && !o.equals(Building.selectedAfterBuiltBuilding) && o.doRender)
+			//minions must be rendered last they are on top of everything
+			if (!o.getClass().equals(Tile.class) && !o.toBeRemoved && !o.equals(Building.selectedBuilding) && !o.equals(Building.selectedAfterBuiltBuilding) && o.doRender && !o.getClass().equals(Minion.class))
 				o.render(sb);
 		}
 		if (Building.selectedBuilding != null)
 			Building.selectedBuilding.render(sb);
 		if (Building.selectedAfterBuiltBuilding != null)
 			Building.selectedAfterBuiltBuilding.render(sb);
+		for (GameObject o : objects.values()){
+			if (o.getClass().equals(Minion.class)){
+				o.render(sb);
+			}
+		}
 	}
 	
 	public static void update(float delta){
