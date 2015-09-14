@@ -43,7 +43,7 @@ public class IconLabel extends Actor {
 	}
 
 	@Override
-	public void act(float delta) {
+	public void act(float delta) {//create a cancel button for building waiting to be built TODO
 		if (isClicked() && listener != null && Building.selectedAfterBuiltBuilding != null) {
 			listener.onClick();
 		}

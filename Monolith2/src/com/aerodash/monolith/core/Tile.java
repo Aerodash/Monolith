@@ -1,10 +1,14 @@
 package com.aerodash.monolith.core;
 
+import java.util.ArrayList;
+
 import com.aerodash.monolith.core.shapes.TetrisShape;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.main.Monolith;
+import com.aerodash.monolith.screens.Play;
 import com.aerodash.monolith.utils.Assets;
+import com.aerodash.monolith.utils.Utils;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,12 +35,6 @@ public class Tile extends GameObject {
 
 	@Override
 	public void update(float delta) {
-		if (isJustClicked()){
-			System.out.println("Top : " + top());
-			System.out.println("Bot : " + bot());
-			System.out.println("Left : " + left());
-			System.out.println("Right : " + right());
-		}
 	}
 
 	@Override
@@ -55,6 +53,13 @@ public class Tile extends GameObject {
 		else if (shape.getBuilding().selectedAfterBuilt) {
 			sb.draw(Assets.tile, x, y, width, height);
 			sb.setColor(lightColor);
+			sb.draw(Assets.outline, x - 3, y - 3, width + 6, height + 6);
+		} else if (shape.getBuilding().waitingToBeBuilt && !shape.getBuilding().selectedBeforeBuilt){
+			sb.setColor(lightColor);
+			sb.draw(Assets.outline, x, y, width, height);
+		} else if (shape.getBuilding().waitingToBeBuilt && shape.getBuilding().selectedBeforeBuilt){
+			sb.setColor(lightColor);
+			sb.draw(Assets.outline, x, y, width, height);
 			sb.draw(Assets.outline, x - 3, y - 3, width + 6, height + 6);
 		} else
 			sb.draw(Assets.tile, x, y, width, height);
@@ -187,7 +192,7 @@ public class Tile extends GameObject {
 		float x = getGridX();
 		float y = getGridY();
 		GameObject obj = GameObjects.objectAt(x, y + 1);
-		if (obj != null && ((obj.getClass().equals(Tile.class) && ((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class)) || (obj.getClass().equals(Corridor.class)))){
+		if (obj != null && ((obj.getClass().equals(Tile.class) && (((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class) || ((Tile)obj).isNode == true)) || (obj.getClass().equals(Corridor.class)))){
 			if (obj.getClass().equals(Corridor.class)){
 				Corridor c = (Corridor) obj;
 				for (Tile t : c.getShape().tiles){
@@ -205,7 +210,7 @@ public class Tile extends GameObject {
 		float x = getGridX();
 		float y = getGridY();
 		GameObject obj = GameObjects.objectAt(x, y - 1);
-		if (obj != null && ((obj.getClass().equals(Tile.class) && ((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class)) || (obj.getClass().equals(Corridor.class)))){
+		if (obj != null && ((obj.getClass().equals(Tile.class) && (((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class) || ((Tile)obj).isNode == true)) || (obj.getClass().equals(Corridor.class)))){
 			if (obj.getClass().equals(Corridor.class)){
 				Corridor c = (Corridor) obj;
 				for (Tile t : c.getShape().tiles){
@@ -223,7 +228,7 @@ public class Tile extends GameObject {
 		float x = getGridX();
 		float y = getGridY();
 		GameObject obj = GameObjects.objectAt(x - 1, y);
-		if (obj != null && ((obj.getClass().equals(Tile.class) && ((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class)) || (obj.getClass().equals(Corridor.class)))){
+		if (obj != null && ((obj.getClass().equals(Tile.class) && (((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class) || ((Tile)obj).isNode == true)) || (obj.getClass().equals(Corridor.class)))){
 			if (obj.getClass().equals(Corridor.class)){
 				Corridor c = (Corridor) obj;
 				for (Tile t : c.getShape().tiles){
@@ -241,7 +246,7 @@ public class Tile extends GameObject {
 		float x = getGridX();
 		float y = getGridY();
 		GameObject obj = GameObjects.objectAt(x + 1, y);
-		if (obj != null && ((obj.getClass().equals(Tile.class) && ((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class)) || (obj.getClass().equals(Corridor.class)))){
+		if (obj != null && ((obj.getClass().equals(Tile.class) && (((Tile)obj).shape.getBuilding().getClass().equals(Corridor.class) || ((Tile)obj).isNode == true)) || (obj.getClass().equals(Corridor.class)))){
 			if (obj.getClass().equals(Corridor.class)){
 				Corridor c = (Corridor) obj;
 				for (Tile t : c.getShape().tiles){
@@ -254,9 +259,85 @@ public class Tile extends GameObject {
 		}
 		return null;
 	}
+	
+	public GameObject getNotNullSurrounding(){
+		GameObject[] objs = new GameObject[]{
+				top(), bot(), left(), right()
+		};
+		for (GameObject o : objs){
+			if (o != null) return o;
+		}
+		
+		return null;
+	}
 
 	@Override
 	public String toString() {
 		return "[" + getGridX() + ", " + getGridY() + "]";
+	}
+	
+	public ArrayList<Tile> getPathTo(int nodeId) {
+		System.out.println("Calculating path from tile : " + this + " to node id : " + nodeId);
+		ArrayList<Tile> res = new ArrayList<>();
+		if (this.nodeId == nodeId) return res;//if on a node with same id return no path you are already on it !
+		Tile[] previousTiles = new Tile[2];
+		Array<Tile> tilesToBan = new Array<>();
+		Tile currentTile = this;
+		tilesToBan.add(currentTile);//the tile itself cant be part of the path
+		int j = 0;
+		while (currentTile != Play.graph.getNodeById(Integer.toString(nodeId)).getTile()) {
+			System.out.println("Current : " + currentTile);
+			Utils.arrayPush(previousTiles, currentTile);
+			Tile[] tiles = new Tile[4];
+			try {
+				tiles[0] = (Tile) currentTile.top();
+			} catch (ClassCastException e) {
+				tiles[0] = null;
+			}
+			try {
+				tiles[1] = (Tile) currentTile.bot();
+			} catch (ClassCastException e) {
+				tiles[1] = null;
+			}
+			try {
+				tiles[2] = (Tile) currentTile.left();
+			} catch (ClassCastException e) {
+				tiles[2] = null;
+			}
+			try {
+				tiles[3] = (Tile) currentTile.right();
+			} catch (ClassCastException e) {
+				tiles[3] = null;
+			}
+
+			for (Tile tl : tiles) {
+				if (tl != null && !res.contains(tl) && !tilesToBan.contains(tl, false)) {
+					res.add(tl);
+					currentTile = tl;
+					break;
+				}
+			}
+
+			for (int i = 0; i < res.size(); i++) {
+				System.out.print(res.get(i) + ";");
+			}
+			System.out.println();
+
+			if (Utils.allItemsSame(previousTiles)) {// stuck in a tile no path
+				System.out.println("Tile banned : " + currentTile);
+				tilesToBan.add(currentTile);// ban the tile that caused that
+				res.clear();
+				Utils.clearArray(previousTiles);
+				currentTile = this;//reset
+				System.out.println("Testing other tiles..");
+			}
+			
+			//security break;
+//			j++;
+//			if (j > 20) break;
+			
+		}
+		System.out.println("*****");
+		return res;
 	}
 }

@@ -21,6 +21,7 @@ public class Monolith extends Game{
 		Gdx.gl.glClearColor(0.055f, 0.066f, 0.1f, 1);
 		Debug.on();
 		Debug.showText();
+		Debug.off();
 		setScreen(new Play());
 	}
 	

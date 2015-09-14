@@ -1,6 +1,7 @@
 package com.aerodash.monolith.djikstra;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.aerodash.monolith.main.Monolith;
@@ -43,6 +44,15 @@ public class Graph {
 
 	public void addNode(Vertex v) {
 		nodes.add(v);
+	}
+	
+	public Vertex getNodeById(String id){
+		Iterator<Vertex> it = nodes.iterator();
+		while(it.hasNext()){
+			Vertex v = it.next();
+			if (v.getId().equals(id)) return v;
+		}
+		return null;
 	}
 
 	public void addEdge(String laneId, int sourceLocNo, int destLocNo, int duration) {

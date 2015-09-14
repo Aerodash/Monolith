@@ -8,6 +8,7 @@ import com.aerodash.monolith.core.shapes.TetrisShape.TypeState;
 import com.aerodash.monolith.djikstra.Graph;
 import com.aerodash.monolith.djikstra.Vertex;
 import com.aerodash.monolith.entities.Building;
+import com.aerodash.monolith.entities.Minion;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.entities.buildings.Extractor;
 import com.aerodash.monolith.entities.buildings.Gardens;
@@ -124,7 +125,7 @@ public class Play extends ScreenAdapter {
 		hudStage.act(delta);
 		hudStage.draw();
 
-		graph.render(sr);
+//		graph.render(sr);
 		
 		// temp enemy wave timer (add to ui package)
 		sr.begin(ShapeType.Filled);
@@ -153,12 +154,14 @@ public class Play extends ScreenAdapter {
 		graph.addNode(new Vertex(Integer.toString(Play.currentNodeId), "NODE_" + Play.currentNodeId, c.getShape().tiles.get(0)));
 		Play.currentNodeId++;
 		Corridor c1 = new Corridor(6, 5, new TypeState(InitialState.ONE, TetrisShape.Type.S));
-//		Minion m = new Minion(5, 5);
 		stock = new Stock(5, 6);
 		stock2 = new Stock(5, 4);
 		stock3 = new Stock(4, 5);
 		c1.built = c.built = stock2.built = stock3.built = stock.built = true;
 		c1.selectable = c.selectable = stock.selectable = stock2.selectable = stock3.selectable = false;
+		Minion m = new Minion(5, 5);
+		Minion m1 = new Minion(5, 6);
+		Minion m2 = new Minion(5, 6);
 	}
 
 	@Override

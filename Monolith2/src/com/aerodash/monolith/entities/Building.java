@@ -1,6 +1,8 @@
 package com.aerodash.monolith.entities;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.aerodash.monolith.core.Cost;
 import com.aerodash.monolith.core.GameObject;
@@ -28,21 +30,24 @@ public abstract class Building extends GameObject {
 
 	public static Building selectedBuilding = null;
 	public static Building selectedAfterBuiltBuilding = null;
+	public static Building selectedBeforeBuiltBuilding = null;
 	private Array<Resource> res;// resource contained in the building
-	public boolean isFull = false;
+	public boolean isFull = false;//is full of resources
 
 	private TetrisShape shape;
-	public boolean selectable = true;
-	public boolean built = false;
-	public boolean selected = false;
-	private boolean collided = false;
-	public boolean selectedAfterBuilt = false;
-	private float oldX, oldY;
-	public boolean showSurroundingTiles = false;
+	public boolean selectable = true; 
+	public boolean built = false; //true if built
+	public boolean waitingToBeBuilt = false; //waiting to be built
+	public boolean selected = false; //following the cursor
+	private boolean collided = false; //collided with another GameObject 
+	public boolean selectedAfterBuilt = false; //selected after built
+	public boolean selectedBeforeBuilt = false; //selected while waiting to be built
+	@Deprecated private float oldX, oldY;
+	public boolean showSurroundingTiles = false;//DEBUG FEATURE
 	public boolean nextToCorridor = false;// building can only be placed next to
 											// a corridor
-
-	public Tile nodeTile = null;
+	
+	public Tile nodeTile = null;//the tile representing the building
 	private Cost cost;
 
 	public Building(float x, float y, Color color, TypeState typeState, Cost cost) {
@@ -59,12 +64,6 @@ public abstract class Building extends GameObject {
 	public void update(float delta) {
 
 		if (isClicked()) {
-			if (nodeTile != null) {
-				ArrayList<Tile> tiles = getPathTo(0);
-				for (Tile t : tiles) {
-					System.out.println(t);
-				}
-			}
 			if (selected && !collided) {
 
 				ArrayList<Vector2> vecs = getSurroundingTiles();
@@ -89,15 +88,14 @@ public abstract class Building extends GameObject {
 						}
 					}
 					setSelected(false);// put building in position
-					built = true;
+					waitingToBeBuilt = true;
 					Play.switchToNextShape = true;
-					if (!getClass().equals(Corridor.class)) // corridor are
-															// paths not nodes
-						chooseNodeTile();
+					if (!getClass().equals(Corridor.class)) // corridor are paths not nodes
+						chooseNodeTile();//when built choose node TODO
 				}
 				// only one building can be selected at a time
 				// if it is built it cannot be moved again
-			} else if (selectedBuilding == null && !built) {
+			} else if (selectedBuilding == null && !built && !waitingToBeBuilt) {
 
 				setOldPos(x, y);
 				setSelected(true);
@@ -135,7 +133,16 @@ public abstract class Building extends GameObject {
 			if (clickedOutside())
 				setSelectedAfterBuilt(false);
 		}
-
+		
+//		System.out.println("Selected before built : " + selectedBeforeBuiltBuilding);
+		if (waitingToBeBuilt && selectedBuilding == null && selectable) {
+			System.out.println("Before built stuff");
+			if (isClicked() && !built)
+				setSelectedBeforeBuilt(true);
+			if (clickedOutside())
+				setSelectedBeforeBuilt(false);
+			System.out.println(selectedBeforeBuilt);
+		}
 	}
 
 	private void chooseNodeTile() {
@@ -166,6 +173,15 @@ public abstract class Building extends GameObject {
 			selectedAfterBuiltBuilding = null;
 			selectedAfterBuilt = false;
 		}
+		//remove the node from the graph
+		List<Vertex> vs = Play.graph.getNodes();
+		Iterator<Vertex> it = vs.iterator();
+		while(it.hasNext()){
+			Vertex v = it.next();
+			if (v.getTile().equals(nodeTile)){
+				it.remove();
+			}
+		}
 	}
 
 	@Override
@@ -180,7 +196,9 @@ public abstract class Building extends GameObject {
 		if (showSurroundingTiles) {
 			sb.begin();
 			ArrayList<Vector2> tab = getSurroundingTiles();
-			sb.setColor(Color.RED);
+			Color transparentRed = Color.RED.cpy();
+			transparentRed.a = .5f;
+			sb.setColor(transparentRed);
 			for (Vector2 v : tab) {
 				sb.draw(Assets.tile, v.x * Monolith.tileSize, v.y * Monolith.tileSize, Monolith.tileSize,
 						Monolith.tileSize);
@@ -223,6 +241,14 @@ public abstract class Building extends GameObject {
 			selectedAfterBuilt = true;
 		} else {
 			selectedAfterBuilt = false;
+		}
+	}
+	
+	public void setSelectedBeforeBuilt(boolean b) {
+		if (b) {
+			selectedBeforeBuilt = true;
+		} else {
+			selectedBeforeBuilt = false;
 		}
 	}
 
@@ -300,66 +326,12 @@ public abstract class Building extends GameObject {
 		return cost;
 	}
 
-	public ArrayList<Tile> getPathTo(int nodeNumber) {
-		ArrayList<Tile> res = new ArrayList<>();
-		Tile[] previousTiles = new Tile[3];
-		Array<Tile> tilesToBan = new Array<>();
-		Tile currentTile = nodeTile;
-		int j = 0;
-		while (currentTile != Play.graph.getNodes().get(0).getTile()) {
-			System.out.println("Current : " + currentTile);
-			Utils.arrayPush(previousTiles, currentTile);//???
-			Tile[] tiles = new Tile[4];
-			try {
-				tiles[0] = (Tile) currentTile.top();
-			} catch (ClassCastException e) {
-				tiles[0] = null;
-			}
-			try {
-				tiles[1] = (Tile) currentTile.bot();
-			} catch (ClassCastException e) {
-				tiles[1] = null;
-			}
-			try {
-				tiles[2] = (Tile) currentTile.left();
-			} catch (ClassCastException e) {
-				tiles[2] = null;
-			}
-			try {
-				tiles[3] = (Tile) currentTile.right();
-			} catch (ClassCastException e) {
-				tiles[3] = null;
-			}
-			
-			//nullify banned tiles
-			for (Tile t : tiles){
-				if (tilesToBan.contains(t, false)){
-					t = null;
-				}
-			}
-			
-			for (Tile tl : tiles) {
-				if (tl != null && !res.contains(tl)) {
-					res.add(tl);
-					currentTile = tl;
-					break;
-				}
-			}
-			
-			for (int i = 0; i < res.size(); i++){
-				System.out.print(res.get(i) + ";");
-			}
-			System.out.println();
-			
-			if (Utils.allItemsSame(previousTiles)){//stuck in a tile no path to origin ! 
-				System.out.println("Tile banned : " + res.get(1));
-				tilesToBan.add(res.get(1));//ban the tile that caused that
-				res.clear();
-				Utils.clearArray(previousTiles);
-				System.out.println("Testing other tiles..");
+	public Tile getTileAt(float gridX, float gridY){
+		for (int i = 0; i < shape.tiles.size; i++){
+			if (shape.tiles.get(i).getGridX() == gridX && shape.tiles.get(i).getGridY() == gridY){
+				return shape.tiles.get(i);
 			}
 		}
-		System.out.println("*****");
-		return res;
+		return null;
 	}
 }
