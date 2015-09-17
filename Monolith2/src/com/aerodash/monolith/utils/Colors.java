@@ -1,6 +1,7 @@
 package com.aerodash.monolith.utils;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 
 public class Colors {
 	
@@ -19,4 +20,9 @@ public class Colors {
 	//enemy wave timer bar
 	public static final Color waveBarColor = new Color(0.91f, 0.21f, 0.21f, 1f);
 	public static final Color waveBarBgColor = new Color(0.91f, 0.51f, 0.51f, 0.4f);
+	
+	public static Color randomShade(Color baseColor){
+		float rand = MathUtils.random(0.3f, 0.75f);
+		return new Color(baseColor.r * rand, baseColor.g * rand, baseColor.b * rand, baseColor.a);
+	}
 }

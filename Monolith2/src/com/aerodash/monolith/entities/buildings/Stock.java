@@ -8,8 +8,13 @@ import com.aerodash.monolith.entities.Building;
 import com.badlogic.gdx.graphics.Color;
 
 public class Stock extends Building{
-
+	
 	public Stock(float x, float y) {
 		super(x, y, Color.GRAY, new TypeState(InitialState.ONE, Type.Tile), Cost.free);
+	}
+	
+	@Override
+	public void addResource(com.aerodash.monolith.entities.Resource.Type type) {
+		
 	}
 }

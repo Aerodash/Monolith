@@ -9,6 +9,7 @@ import com.aerodash.monolith.djikstra.Graph;
 import com.aerodash.monolith.djikstra.Vertex;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
+import com.aerodash.monolith.entities.ParticleMine;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.entities.buildings.Extractor;
 import com.aerodash.monolith.entities.buildings.Gardens;
@@ -21,6 +22,7 @@ import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.ui.BuildingLabel;
 import com.aerodash.monolith.ui.ExpandingLabel;
 import com.aerodash.monolith.ui.IconLabel;
+import com.aerodash.monolith.ui.IconLabel.VisibilityCondition;
 import com.aerodash.monolith.ui.LabelListener;
 import com.aerodash.monolith.ui.NextShapePanel;
 import com.aerodash.monolith.utils.Assets;
@@ -43,7 +45,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class Play extends ScreenAdapter {
 
 	public static int currentNodeId = 0;
-	public static final boolean cheatMode = true;
+	public static final boolean cheatMode = false;
 	public static Cost resRemaining = Cost.starter;
 	private int width;
 	private int height;
@@ -96,14 +98,14 @@ public class Play extends ScreenAdapter {
 		graph.addEdge("Edge_10", 9, 10, 40);
 		graph.addEdge("Edge_11", 1, 10, 600);
 
-		//shortest path from 0 to 10
-//		DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
-//		dijkstra.execute(nodes.get(0));
-//		LinkedList<Vertex> path = dijkstra.getPath(nodes.get(10));
-//
-//		for (Vertex vertex : path) {
-//			System.out.println(vertex);
-//		}
+		// shortest path from 0 to 10
+		// DijkstraAlgorithm dijkstra = new DijkstraAlgorithm(graph);
+		// dijkstra.execute(nodes.get(0));
+		// LinkedList<Vertex> path = dijkstra.getPath(nodes.get(10));
+		//
+		// for (Vertex vertex : path) {
+		// System.out.println(vertex);
+		// }
 	}
 
 	public static Graph graph;
@@ -125,8 +127,8 @@ public class Play extends ScreenAdapter {
 		hudStage.act(delta);
 		hudStage.draw();
 
-//		graph.render(sr);
-		
+		// graph.render(sr);
+
 		// temp enemy wave timer (add to ui package)
 		sr.begin(ShapeType.Filled);
 
@@ -141,17 +143,18 @@ public class Play extends ScreenAdapter {
 		Assets.smallFont.setColor(new Color(0.91f, 0.21f, 0.21f, 1f));
 		Assets.smallFont.draw(sb, "Time to next wave (2 enemies) :", 5, 75);
 		sb.end();
-		
+
 	}
 
 	Corridor c;
 	Stock stock, stock2, stock3;
-
+	ParticleMine mine = new ParticleMine(7, 5);
 	private void setupInitialMap() {
 		c = new Corridor(5, 5, new TypeState(InitialState.ONE, TetrisShape.Type.Tile));
 		c.getShape().tiles.get(0).isNode = true;
 		c.getShape().tiles.get(0).nodeId = Play.currentNodeId;
-		graph.addNode(new Vertex(Integer.toString(Play.currentNodeId), "NODE_" + Play.currentNodeId, c.getShape().tiles.get(0)));
+		graph.addNode(new Vertex(Integer.toString(Play.currentNodeId), "NODE_" + Play.currentNodeId,
+				c.getShape().tiles.get(0)));
 		Play.currentNodeId++;
 		Corridor c1 = new Corridor(6, 5, new TypeState(InitialState.ONE, TetrisShape.Type.S));
 		stock = new Stock(5, 6);
@@ -289,7 +292,34 @@ public class Play extends ScreenAdapter {
 			}
 
 		});
+		refund.setVisibilityCondition(new VisibilityCondition() {
+
+			@Override
+			public boolean isVisible() {
+				return Building.selectedAfterBuiltBuilding != null;
+			}
+
+		});
 		hudStage.addActor(refund);
+
+		IconLabel cancel = new IconLabel(320, 75, "Cancel", Assets.x, Colors.waveBarColor);
+		cancel.setListener(new LabelListener() {
+
+			@Override
+			public void onClick() {
+				System.out.println("CANCELING");
+				Building.selectedBeforeBuiltBuilding.dispose();
+			}
+
+		});
+		cancel.setVisibilityCondition(new VisibilityCondition() {
+			
+			@Override
+			public boolean isVisible() {
+				return Building.selectedBeforeBuiltBuilding != null;
+			}
+		});
+		hudStage.addActor(cancel);
 
 	}
 

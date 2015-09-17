@@ -88,7 +88,8 @@ public abstract class Building extends GameObject {
 						}
 					}
 					setSelected(false);// put building in position
-					waitingToBeBuilt = true;
+//					waitingToBeBuilt = true;
+					built = true;
 					Play.switchToNextShape = true;
 					if (!getClass().equals(Corridor.class)) // corridor are paths not nodes
 						chooseNodeTile();//when built choose node TODO
@@ -134,14 +135,11 @@ public abstract class Building extends GameObject {
 				setSelectedAfterBuilt(false);
 		}
 		
-//		System.out.println("Selected before built : " + selectedBeforeBuiltBuilding);
 		if (waitingToBeBuilt && selectedBuilding == null && selectable) {
-			System.out.println("Before built stuff");
 			if (isClicked() && !built)
 				setSelectedBeforeBuilt(true);
 			if (clickedOutside())
 				setSelectedBeforeBuilt(false);
-			System.out.println(selectedBeforeBuilt);
 		}
 	}
 
@@ -292,8 +290,9 @@ public abstract class Building extends GameObject {
 		if (res.size == 4) {
 			isFull = true;
 			return;
+		}else{
+			res.add(new Resource(emptyTile(), type));
 		}
-		res.add(new Resource(emptyTile(), type));
 	}
 
 	public Tile emptyTile() {

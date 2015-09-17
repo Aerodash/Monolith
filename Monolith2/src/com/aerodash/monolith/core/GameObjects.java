@@ -6,12 +6,12 @@ import java.util.Map.Entry;
 
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
+import com.aerodash.monolith.entities.ParticleMine;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.utils.Assets;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 public class GameObjects {
 
@@ -19,6 +19,15 @@ public class GameObjects {
 	private static HashMap<Integer, GameObject> objects = new HashMap<>();
 	private static HashMap<Integer, GameObject> minions = new HashMap<>();
 	private static HashMap<Vector2, Integer> nbMinionsAtPos = new HashMap<>();
+	private static HashMap<Integer, Building> constructionQueue = new HashMap<>();
+	
+	public static void addToQueue(Building b){
+		constructionQueue.put(b.id, b);
+	}
+	
+	public static void removeFromQueue(int id){
+		constructionQueue.remove(id);
+	}
 
 	public static void addObject(GameObject ob) {
 		ob.id = nextId;
@@ -196,7 +205,6 @@ public class GameObjects {
 				Building b = (Building) o;
 				if (b.selectedBeforeBuilt) {
 					buildingFound = true;
-					System.out.println("FOUND ******************************************************");
 					Building.selectedBeforeBuiltBuilding = b;
 					break;
 				}
@@ -246,7 +254,19 @@ public class GameObjects {
 				nbMinionsAtPos.put(pos, 1);
 			}
 		}
-
+		
+		//adding building to be built to the queue
+		it = objects.values().iterator();
+		while(it.hasNext()){
+			GameObject o = it.next();
+			if (o.getClass().getSuperclass().equals(Building.class)){
+				Building b = (Building) o;
+				if (b.waitingToBeBuilt && !constructionQueue.containsKey(b.id)){
+					addToQueue(b);
+				}
+			}
+		}
+		
 	}
 
 	public static String stringify() {

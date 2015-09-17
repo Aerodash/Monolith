@@ -18,6 +18,7 @@ public class IconLabel extends Actor {
 	private Color iconColor;
 	private LabelListener listener;
 	private float iconScale = .4f;
+	private VisibilityCondition condition;
 
 	public IconLabel(float x, float y, String text, TextureRegion icon, Color iconColor) {
 		setX(x);
@@ -29,22 +30,19 @@ public class IconLabel extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-
-		if (Building.selectedAfterBuiltBuilding != null) {
-			
+		if (condition != null && condition.isVisible()) {
 			Assets.smallFont.setColor(iconColor);
 			Assets.smallFont.draw(batch, text, getX() + icon.getRegionWidth() * iconScale + 5, getY());
-
+	
 			batch.setColor(iconColor);
 			batch.draw(icon, getX(), getY() - icon.getRegionHeight() * iconScale, 0, 0, icon.getRegionWidth(),
 					icon.getRegionHeight(), iconScale, iconScale, 0);
-
 		}
 	}
 
 	@Override
-	public void act(float delta) {//create a cancel button for building waiting to be built TODO
-		if (isClicked() && listener != null && Building.selectedAfterBuiltBuilding != null) {
+	public void act(float delta) {
+		if (isClicked() && listener != null && condition != null && condition.isVisible()) {
 			listener.onClick();
 		}
 	}
@@ -63,6 +61,14 @@ public class IconLabel extends Actor {
 	public boolean isClicked() {
 		return Gdx.input.justTouched() && getBounds().contains(Gdx.input.getX(), Monolith.height - Gdx.input.getY())
 				&& Gdx.input.isButtonPressed(Buttons.LEFT);
+	}
+	
+	public void setVisibilityCondition(VisibilityCondition condition){
+		this.condition = condition;
+	}
+	
+	public interface VisibilityCondition{
+		public boolean isVisible();
 	}
 
 }
