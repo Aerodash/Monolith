@@ -9,7 +9,6 @@ import com.aerodash.monolith.djikstra.Graph;
 import com.aerodash.monolith.djikstra.Vertex;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
-import com.aerodash.monolith.entities.Minion.Job;
 import com.aerodash.monolith.entities.ParticleMine;
 import com.aerodash.monolith.entities.Resource;
 import com.aerodash.monolith.entities.Resource.Type;
@@ -27,8 +26,8 @@ import com.aerodash.monolith.ui.ExpandingLabel;
 import com.aerodash.monolith.ui.IconLabel;
 import com.aerodash.monolith.ui.IconLabel.VisibilityCondition;
 import com.aerodash.monolith.ui.LabelListener;
+import com.aerodash.monolith.ui.MinionJobLabel;
 import com.aerodash.monolith.ui.NextShapePanel;
-import com.aerodash.monolith.ui.ResourceBuildingBar;
 import com.aerodash.monolith.utils.Assets;
 import com.aerodash.monolith.utils.Colors;
 import com.aerodash.monolith.utils.Debug;
@@ -52,6 +51,7 @@ public class Play extends ScreenAdapter {
 	public static int currentNodeId = 0;
 	public static final boolean cheatMode = false;
 	public static Cost resRemaining = Cost.starter;
+	public static MinionJobLabel idle, construction, food, engineering, research; 
 	private int width;
 	private int height;
 	private ShapeRenderer sr;
@@ -334,6 +334,23 @@ public class Play extends ScreenAdapter {
 			}
 		});
 		hudStage.addActor(cancel);
+		
+		int labelOffset = 50;
+		idle = new MinionJobLabel(Monolith.width - labelOffset, 80, "Idle");
+		hudStage.addActor(idle);
+
+		construction = new MinionJobLabel(Monolith.width - labelOffset, idle.getY() + MinionJobLabel.height, "Construc.");
+		hudStage.addActor(construction);
+
+		food = new MinionJobLabel(Monolith.width - labelOffset, construction.getY() + MinionJobLabel.height, "Food");
+		hudStage.addActor(food);
+
+		engineering = new MinionJobLabel(Monolith.width - labelOffset, food.getY() + MinionJobLabel.height, "Engineer.");
+		hudStage.addActor(engineering);
+
+		research = new MinionJobLabel(Monolith.width - labelOffset, engineering.getY() + MinionJobLabel.height, "Research");
+		hudStage.addActor(research);
+
 
 	}
 
