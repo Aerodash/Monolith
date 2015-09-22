@@ -14,12 +14,25 @@ public class Resource extends GameObject{
 	public TextureRegion tex;
 	public Type type;
 	public Tile tile;
+	public Minion minion;
 	
 	public Resource(Tile tile, Type type){
 		super(tile.getX() + Monolith.tileSize / 2 - 10 / 2, tile.getY() + Monolith.tileSize / 2 - 10 / 2, 10, 10, null, false, false);
 		this.type = type;
 		this.tile = tile;
 		this.width = this.height = 10;
+		setType();
+	}
+	
+	public Resource(Minion minion, Type type){
+		super(minion.getX() + Monolith.tileSize / 2 - 10 / 2, minion.getY() + Monolith.tileSize / 2 - 10 / 2, 3, 3, null, false, false);
+		this.type = type;
+		this.minion = minion;
+		this.width = this.height = 10;
+		setType();
+	}
+	
+	private void setType(){
 		switch(type){
 		case Particle:
 			this.color = Colors.particle;
@@ -38,7 +51,6 @@ public class Resource extends GameObject{
 			tex = new TextureRegion(new Texture(Gdx.files.internal("res/img/headlessTriangle.png")));
 			break;
 		}
-		
 	}
 	
 	public enum Type{
@@ -50,7 +62,10 @@ public class Resource extends GameObject{
 	
 	@Override
 	public void update(float delta) {
-		
+		if (minion != null){
+			x = minion.getX();
+			y = minion.getY();
+		}
 	}
 	
 	@Override
@@ -59,10 +74,17 @@ public class Resource extends GameObject{
 		
 		sb.setColor(color);
 		
-		if (type != Type.Energy)
-			sb.draw(tex, x, y, width, height);
-		else
-			sb.draw(tex, x, y, width / 2, height / 2, width, height, 1, 1, 45, true);
+		if (minion != null){
+			if (type != Type.Energy)
+				sb.draw(tex, x + Monolith.tileSize / 2 - 5, y + Monolith.tileSize / 2 - 5, 0, 0, width, height, .5f, .5f, 0, true);
+			else
+				sb.draw(tex, x, y, width / 2, height / 2, width, height, .5f, .5f, 45, true);
+		}else{
+			if (type != Type.Energy)
+				sb.draw(tex, x, y, 0, 0, width, height, 1, 1, 0, true);
+			else
+				sb.draw(tex, x, y, width / 2, height / 2, width, height, 1, 1, 45, true);
+		}
 		
 		sb.end();
 	}

@@ -9,7 +9,10 @@ import com.aerodash.monolith.djikstra.Graph;
 import com.aerodash.monolith.djikstra.Vertex;
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
+import com.aerodash.monolith.entities.Minion.Job;
 import com.aerodash.monolith.entities.ParticleMine;
+import com.aerodash.monolith.entities.Resource;
+import com.aerodash.monolith.entities.Resource.Type;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.entities.buildings.Extractor;
 import com.aerodash.monolith.entities.buildings.Gardens;
@@ -25,11 +28,13 @@ import com.aerodash.monolith.ui.IconLabel;
 import com.aerodash.monolith.ui.IconLabel.VisibilityCondition;
 import com.aerodash.monolith.ui.LabelListener;
 import com.aerodash.monolith.ui.NextShapePanel;
+import com.aerodash.monolith.ui.ResourceBuildingBar;
 import com.aerodash.monolith.utils.Assets;
 import com.aerodash.monolith.utils.Colors;
 import com.aerodash.monolith.utils.Debug;
 import com.aerodash.monolith.utils.MyInputProcessor;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -143,13 +148,21 @@ public class Play extends ScreenAdapter {
 		Assets.smallFont.setColor(new Color(0.91f, 0.21f, 0.21f, 1f));
 		Assets.smallFont.draw(sb, "Time to next wave (2 enemies) :", 5, 75);
 		sb.end();
+		
+		if (Gdx.input.isKeyJustPressed(Keys.ENTER)){
+			m.go(1);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)){
+			m.go(0);
+		}
 
 	}
 
 	Corridor c;
-	Stock stock, stock2, stock3;
+	Stock sParticle, sEnergy, sFood;
+	Minion m;
 	ParticleMine mine = new ParticleMine(7, 5);
-	private void setupInitialMap() {
+	private void setupInitialMap() {//setup initial map from Json
 		c = new Corridor(5, 5, new TypeState(InitialState.ONE, TetrisShape.Type.Tile));
 		c.getShape().tiles.get(0).isNode = true;
 		c.getShape().tiles.get(0).nodeId = Play.currentNodeId;
@@ -157,14 +170,15 @@ public class Play extends ScreenAdapter {
 				c.getShape().tiles.get(0)));
 		Play.currentNodeId++;
 		Corridor c1 = new Corridor(6, 5, new TypeState(InitialState.ONE, TetrisShape.Type.S));
-		stock = new Stock(5, 6);
-		stock2 = new Stock(5, 4);
-		stock3 = new Stock(4, 5);
-		c1.built = c.built = stock2.built = stock3.built = stock.built = true;
-		c1.selectable = c.selectable = stock.selectable = stock2.selectable = stock3.selectable = false;
-		Minion m = new Minion(5, 5);
-		Minion m1 = new Minion(5, 6);
-		Minion m2 = new Minion(5, 6);
+		sParticle = new Stock(5, 6, Resource.Type.Particle);
+		sParticle.addResource(Type.Particle, Cost.starter.particles);
+		sEnergy = new Stock(5, 4, Resource.Type.Energy);
+		sEnergy.addResource(Type.Energy, Cost.starter.energy);
+		sFood = new Stock(4, 5, Resource.Type.Food);
+		sFood.addResource(Type.Food, Cost.starter.food);
+		c1.built = c.built = sEnergy.built = sFood.built = sParticle.built = true;
+		c1.selectable = c.selectable = sParticle.selectable = sEnergy.selectable = sFood.selectable = false;
+		m = new Minion(5, 5);
 	}
 
 	@Override

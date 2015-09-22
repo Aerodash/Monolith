@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import com.aerodash.monolith.core.GameObject;
 import com.aerodash.monolith.core.GameObjects;
 import com.aerodash.monolith.core.Tile;
+import com.aerodash.monolith.entities.Resource.Type;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.tween.MinionAccessor;
 import com.aerodash.monolith.utils.Assets;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
@@ -23,17 +22,73 @@ import aurelienribon.tweenengine.TweenManager;
 public class Minion extends GameObject{
 	
 	private Tile currentTile;
+	private Tile tileToGoTo;
 	private TweenManager manager;
 	private TweenCallback cb;
 	private ArrayList<Tile> pattern;
 	private float speed = .51f; // plus 0.01 sec of delay because tween take .5s
 	private boolean isMoving = false;
+	private Resource resourceToMove;
+	private Job currentJob;
+	
+	public enum Job {
+		IDLE,
+		Engineering,
+		Food,
+		Construction,
+		Research
+	}
 	
 	public Minion(float x, float y) {
 		super(x * Monolith.tileSize, y * Monolith.tileSize, Assets.minion.getRegionWidth(), Assets.minion.getRegionHeight(), Color.WHITE, true, true);
 		setupTween();
 		pattern = new ArrayList<>();
 		setCurrentTile(x, y);
+		currentJob = Job.IDLE;
+	}
+	
+	@Override
+	public void update(float delta) {
+		manager.update(delta);
+		setCurrentTile(getGridX(), getGridY());
+		
+		if (currentTile != null && currentTile.equals(tileToGoTo) && currentJob.equals(Job.Construction) && resourceToMove == null){
+			System.out.println("Reached goal !");
+			Resource r = currentTile.shape.getBuilding().res.pop();
+			r.tile.hasResource = false;
+			setResourceToMove(r.type);
+		}
+		
+		if (resourceToMove != null)
+			resourceToMove.update(delta);
+	}
+
+	@Override
+	public void render(SpriteBatch sb) {
+		sb.begin();
+		sb.setColor(Color.WHITE);
+		sb.draw(Assets.minion, x + Monolith.tileSize / 2 - Assets.minion.getRegionWidth() / 2, y + Monolith.tileSize / 2 - Assets.minion.getRegionHeight() / 2);
+		sb.end();
+		if (resourceToMove != null)
+			resourceToMove.render(sb);
+	}
+	
+	public void go(int nodeId){
+		if (!isMoving)
+			tweenToBuilding(nodeId);
+	}
+	
+	private void setResourceToMove(Type type){
+		resourceToMove = new Resource(currentTile, type);
+		resourceToMove.minion = this;
+	}
+	
+	public Job getCurrentJob() {
+		return currentJob;
+	}
+
+	public void setCurrentJob(Job currentJob) {
+		this.currentJob = currentJob;
 	}
 
 	private void setCurrentTile(float gridX, float gridY) {
@@ -44,22 +99,6 @@ public class Minion extends GameObject{
 		if (o.getClass().getSuperclass().equals(Building.class)){
 			currentTile = ((Building)o).getTileAt(gridX, gridY);
 		}
-	}
-
-	@Override
-	public void update(float delta) {
-		manager.update(delta);
-		
-		if (Gdx.input.isKeyJustPressed(Keys.ENTER)){
-			go(1);
-		}
-		
-		setCurrentTile(getGridX(), getGridY());
-	}
-
-	public void go(int nodeId){
-		if (!isMoving)
-			tweenToBuilding(nodeId);
 	}
 	
 	private void tweenToBuilding(int nodeId) {
@@ -116,19 +155,12 @@ public class Minion extends GameObject{
 		tweenMovement(MinionAccessor.Y, y);
 		
 	}
-
-	@Override
-	public void render(SpriteBatch sb) {
-		sb.begin();
-		sb.setColor(Color.WHITE);
-		sb.draw(Assets.minion, x + Monolith.tileSize / 2 - Assets.minion.getRegionWidth() / 2, y + Monolith.tileSize / 2 - Assets.minion.getRegionHeight() / 2);
-		sb.end();
-	}
-	
 	
 	public void goToBuilding(int nodeId){
 		pattern.clear();
 		pattern.addAll(currentTile.getPathTo(nodeId));
+		tileToGoTo = pattern.get(pattern.size() - 1);
+		System.out.println("Tile to go to : " + tileToGoTo);
 		System.out.println("Current tile ID : " + currentTile.nodeId);
 		System.out.println(pattern.toString());
 	}

@@ -277,7 +277,7 @@ public class Tile extends GameObject {
 	}
 	
 	public ArrayList<Tile> getPathTo(int nodeId) {
-		System.out.println("Calculating path from tile : " + this + " to node id : " + nodeId);
+//		System.out.println("Calculating path from tile : " + this + " to node id : " + nodeId);
 		ArrayList<Tile> res = new ArrayList<>();
 		if (this.nodeId == nodeId) return res;//if on a node with same id return no path you are already on it !
 		Tile[] previousTiles = new Tile[2];
@@ -286,7 +286,7 @@ public class Tile extends GameObject {
 		tilesToBan.add(currentTile);//the tile itself cant be part of the path
 		int j = 0;
 		while (currentTile != Play.graph.getNodeById(Integer.toString(nodeId)).getTile()) {
-			System.out.println("Current : " + currentTile);
+//			System.out.println("Current : " + currentTile);
 			Utils.arrayPush(previousTiles, currentTile);
 			Tile[] tiles = new Tile[4];
 			try {
@@ -318,18 +318,18 @@ public class Tile extends GameObject {
 				}
 			}
 
-			for (int i = 0; i < res.size(); i++) {
-				System.out.print(res.get(i) + ";");
-			}
-			System.out.println();
+//			for (int i = 0; i < res.size(); i++) {
+//				System.out.print(res.get(i) + ";");
+//			}
+//			System.out.println();
 
 			if (Utils.allItemsSame(previousTiles)) {// stuck in a tile no path
-				System.out.println("Tile banned : " + currentTile);
+//				System.out.println("Tile banned : " + currentTile);
 				tilesToBan.add(currentTile);// ban the tile that caused that
 				res.clear();
 				Utils.clearArray(previousTiles);
 				currentTile = this;//reset
-				System.out.println("Testing other tiles..");
+//				System.out.println("Testing other tiles..");
 			}
 			
 			//security break;
@@ -337,7 +337,7 @@ public class Tile extends GameObject {
 //			if (j > 20) break;
 			
 		}
-		System.out.println("*****");
+//		System.out.println("*****");
 		return res;
 	}
 }

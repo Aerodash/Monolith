@@ -16,7 +16,9 @@ import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.exception.CostException;
 import com.aerodash.monolith.main.Monolith;
 import com.aerodash.monolith.screens.Play;
+import com.aerodash.monolith.ui.ResourceBuildingBar;
 import com.aerodash.monolith.utils.Assets;
+import com.aerodash.monolith.utils.Colors;
 import com.aerodash.monolith.utils.Utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
@@ -31,10 +33,10 @@ public abstract class Building extends GameObject {
 	public static Building selectedBuilding = null;
 	public static Building selectedAfterBuiltBuilding = null;
 	public static Building selectedBeforeBuiltBuilding = null;
-	private Array<Resource> res;// resource contained in the building
+	protected Array<Resource> res;// resource contained in the building
 	public boolean isFull = false;//is full of resources
 
-	private TetrisShape shape;
+	protected TetrisShape shape;
 	public boolean selectable = true; 
 	public boolean built = false; //true if built
 	public boolean waitingToBeBuilt = false; //waiting to be built
@@ -46,9 +48,15 @@ public abstract class Building extends GameObject {
 	public boolean showSurroundingTiles = false;//DEBUG FEATURE
 	public boolean nextToCorridor = false;// building can only be placed next to
 											// a corridor
+	public boolean waitingTobeCollected = false;
 	
 	public Tile nodeTile = null;//the tile representing the building
 	private Cost cost;
+	
+	//resource bars
+	ResourceBuildingBar particleBar;
+	ResourceBuildingBar energyBar;
+	ResourceBuildingBar foodBar;
 
 	public Building(float x, float y, Color color, TypeState typeState, Cost cost) {
 		super(x * Monolith.tileSize, y * Monolith.tileSize, 0, 0, color, true, true);
@@ -58,8 +66,16 @@ public abstract class Building extends GameObject {
 
 		this.cost = cost;
 		res = new Array<Resource>(4);
+		
 	}
 
+	private void setResourceBars(){
+		float barWidth = Monolith.tileSize - 4, barHeight = Monolith.tileSize / 3 - 2;
+		energyBar = new ResourceBuildingBar(nodeTile.getX() + 2, nodeTile.getY() + (2 * Monolith.tileSize) / 3 + 1, Colors.energy, cost.energy);
+		particleBar = new ResourceBuildingBar(nodeTile.getX() + 2, energyBar.getY() - 2 - barHeight, Colors.particle, cost.particles);
+		foodBar = new ResourceBuildingBar(nodeTile.getX() + 2, particleBar.getY() - 2 - barHeight, Colors.food, cost.food);
+	}
+	
 	@Override
 	public void update(float delta) {
 
@@ -88,11 +104,12 @@ public abstract class Building extends GameObject {
 						}
 					}
 					setSelected(false);// put building in position
-//					waitingToBeBuilt = true;
-					built = true;
+					waitingToBeBuilt = true;
+//					built = true;
 					Play.switchToNextShape = true;
 					if (!getClass().equals(Corridor.class)) // corridor are paths not nodes
 						chooseNodeTile();//when built choose node TODO
+					setResourceBars();//uses node tile must be after choosing node tile
 				}
 				// only one building can be selected at a time
 				// if it is built it cannot be moved again
@@ -141,8 +158,46 @@ public abstract class Building extends GameObject {
 			if (clickedOutside())
 				setSelectedBeforeBuilt(false);
 		}
+		
+		if (res.size == 4) isFull = true;
+		else isFull = false;
+		
+		if (waitingToBeBuilt){
+			energyBar.update(delta);
+			particleBar.update(delta);
+			foodBar.update(delta);
+		}
 	}
 
+	@Override
+	public void render(SpriteBatch sb) {
+		shape.render(sb);
+
+		// render resources contained in building
+		for (Resource r : res) {
+			r.render(sb);
+		}
+		
+		if (waitingToBeBuilt){
+			energyBar.render(sb);
+			particleBar.render(sb);
+			foodBar.render(sb);
+		}
+
+		if (showSurroundingTiles) {
+			sb.begin();
+			ArrayList<Vector2> tab = getSurroundingTiles();
+			Color transparentRed = Color.RED.cpy();
+			transparentRed.a = .5f;
+			sb.setColor(transparentRed);
+			for (Vector2 v : tab) {
+				sb.draw(Assets.tile, v.x * Monolith.tileSize, v.y * Monolith.tileSize, Monolith.tileSize,
+						Monolith.tileSize);
+			}
+			sb.end();
+		}
+	}
+	
 	private void chooseNodeTile() {
 		Array<Tile> tiles = new Array<Tile>();
 		for (int i = 0; i < shape.tiles.size; i++) {
@@ -182,34 +237,13 @@ public abstract class Building extends GameObject {
 		}
 	}
 
-	@Override
-	public void render(SpriteBatch sb) {
-		shape.render(sb);
-
-		// render resources contained in building
-		for (Resource r : res) {
-			r.render(sb);
-		}
-
-		if (showSurroundingTiles) {
-			sb.begin();
-			ArrayList<Vector2> tab = getSurroundingTiles();
-			Color transparentRed = Color.RED.cpy();
-			transparentRed.a = .5f;
-			sb.setColor(transparentRed);
-			for (Vector2 v : tab) {
-				sb.draw(Assets.tile, v.x * Monolith.tileSize, v.y * Monolith.tileSize, Monolith.tileSize,
-						Monolith.tileSize);
-			}
-			sb.end();
-		}
-	}
-
+	@Deprecated
 	private void setOldPos(float x, float y) {
 		oldX = x;
 		oldY = y;
 	}
 
+	@Deprecated
 	public void resetPos() {
 		x = oldX;
 		y = oldY;
@@ -287,11 +321,13 @@ public abstract class Building extends GameObject {
 	}
 
 	public void addResource(Type type) {
-		if (res.size == 4) {
-			isFull = true;
+		if (isFull) {
 			return;
 		}else{
 			res.add(new Resource(emptyTile(), type));
+			if (res.size > 0){
+				waitingTobeCollected = true;
+			}
 		}
 	}
 
