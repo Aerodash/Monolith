@@ -11,6 +11,7 @@ import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
 import com.aerodash.monolith.entities.ParticleMine;
 import com.aerodash.monolith.entities.Resource;
+import com.aerodash.monolith.entities.Minion.Job;
 import com.aerodash.monolith.entities.Resource.Type;
 import com.aerodash.monolith.entities.buildings.Corridor;
 import com.aerodash.monolith.entities.buildings.Extractor;
@@ -179,6 +180,7 @@ public class Play extends ScreenAdapter {
 		c1.built = c.built = sEnergy.built = sFood.built = sParticle.built = true;
 		c1.selectable = c.selectable = sParticle.selectable = sEnergy.selectable = sFood.selectable = false;
 		m = new Minion(5, 5);
+		System.out.println(Integer.toHexString(m.hashCode()));
 	}
 
 	@Override
@@ -336,19 +338,19 @@ public class Play extends ScreenAdapter {
 		hudStage.addActor(cancel);
 		
 		int labelOffset = 50;
-		idle = new MinionJobLabel(Monolith.width - labelOffset, 80, "Idle");
+		idle = new MinionJobLabel(Monolith.width - labelOffset, 80, "Idle", Job.IDLE);
 		hudStage.addActor(idle);
 
-		construction = new MinionJobLabel(Monolith.width - labelOffset, idle.getY() + MinionJobLabel.height, "Construc.");
+		construction = new MinionJobLabel(Monolith.width - labelOffset, idle.getY() + MinionJobLabel.height, "Construc.", Job.Construction);
 		hudStage.addActor(construction);
 
-		food = new MinionJobLabel(Monolith.width - labelOffset, construction.getY() + MinionJobLabel.height, "Food");
+		food = new MinionJobLabel(Monolith.width - labelOffset, construction.getY() + MinionJobLabel.height, "Food", Job.Food);
 		hudStage.addActor(food);
 
-		engineering = new MinionJobLabel(Monolith.width - labelOffset, food.getY() + MinionJobLabel.height, "Engineer.");
+		engineering = new MinionJobLabel(Monolith.width - labelOffset, food.getY() + MinionJobLabel.height, "Engineer.", Job.Engineering);
 		hudStage.addActor(engineering);
 
-		research = new MinionJobLabel(Monolith.width - labelOffset, engineering.getY() + MinionJobLabel.height, "Research");
+		research = new MinionJobLabel(Monolith.width - labelOffset, engineering.getY() + MinionJobLabel.height, "Research", Job.Research);
 		hudStage.addActor(research);
 
 

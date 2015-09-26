@@ -34,19 +34,19 @@ public class MyInputProcessor implements InputProcessor {
 	public boolean touchDragged(int x, int y, int pointer) {
 		if (mouseInUi()) return false;
 		
-		float dX = (float) (x - dragX) / (float) Gdx.graphics.getWidth();
-		float dY = (float) (dragY - y) / (float) Gdx.graphics.getHeight();
-		dragX = x;
-		dragY = y;
-		Vector3 v = new Vector3(-dX * CAMERA_SPEED, -dY * CAMERA_SPEED, 0f);
-		cam.position.add(v);
-		cam.update();
+//		float dX = (float) (x - dragX) / (float) Gdx.graphics.getWidth();
+//		float dY = (float) (dragY - y) / (float) Gdx.graphics.getHeight();
+//		dragX = x;
+//		dragY = y;
+//		Vector3 v = new Vector3(-dX * CAMERA_SPEED, -dY * CAMERA_SPEED, 0f);
+//		cam.position.add(v);
+//		cam.update();
 		
 		return true;
 	}
 
 	private boolean mouseInUi() {
-		if (Monolith.height - Gdx.input.getY() <= 40) return true;
+		if (Monolith.height - Gdx.input.getY() <= 40 && Gdx.input.getX() >= Monolith.width - 50) return true;
 		return false;
 	}
 

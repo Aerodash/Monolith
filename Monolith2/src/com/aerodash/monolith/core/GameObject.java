@@ -35,6 +35,9 @@ public abstract class GameObject {
 		}
 	}
 	
+	public GameObject() {
+	}
+	
 	public Rectangle getBounds(){
 		return new Rectangle(x, y, width - 1, height - 1);
 	}

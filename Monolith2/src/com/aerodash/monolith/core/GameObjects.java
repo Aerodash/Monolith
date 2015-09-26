@@ -6,8 +6,9 @@ import java.util.Map.Entry;
 
 import com.aerodash.monolith.entities.Building;
 import com.aerodash.monolith.entities.Minion;
-import com.aerodash.monolith.entities.ParticleMine;
+import com.aerodash.monolith.entities.Minion.Job;
 import com.aerodash.monolith.main.Monolith;
+import com.aerodash.monolith.screens.Play;
 import com.aerodash.monolith.utils.Assets;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -32,10 +33,19 @@ public class GameObjects {
 	public static void addObject(GameObject ob) {
 		ob.id = nextId;
 		if (ob.getClass().equals(Minion.class))
-			minions.put(nextId, ob);
+			addMinion(ob);
 		else
 			objects.put(nextId, ob);
 		nextId++;
+	}
+	
+	private static void addMinion(GameObject ob){
+		minions.put(nextId, ob);
+		Minion m = (Minion) ob;
+		m.setCurrentJob(Job.IDLE);
+		if (m.getCurrentJob().equals(Job.IDLE)){
+			Play.idle.addMinion(m);
+		}
 	}
 
 	public static GameObject getObject(int id) {

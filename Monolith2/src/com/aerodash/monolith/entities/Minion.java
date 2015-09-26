@@ -11,6 +11,7 @@ import com.aerodash.monolith.screens.Play;
 import com.aerodash.monolith.tween.MinionAccessor;
 import com.aerodash.monolith.utils.Assets;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -48,6 +49,10 @@ public class Minion extends GameObject{
 		currentJob = Job.IDLE;
 	}
 	
+	public Minion() {
+		super();
+	}
+
 	@Override
 	public void update(float delta) {
 		manager.update(delta);
